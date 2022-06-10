@@ -1,5 +1,4 @@
-import { Button } from "../components/Button"
-import { Widget } from "../components/Widget.tsx"
+import { Widget } from "../components/Widget"
 
 function App() {
 
