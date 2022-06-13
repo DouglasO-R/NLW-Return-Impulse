@@ -2,7 +2,9 @@ import { ArrowLeft } from "phosphor-react";
 import { FormEvent, useState } from "react";
 
 import { feedbackType, feedbackTypes } from "../..";
+import { api } from "../../../../lib/api";
 import { ClosedButton } from "../../../ClosedButton";
+import { Loading } from "../../../Loading";
 import { ScreenShotButton } from "../../ScreenShotButton";
 
 
@@ -11,19 +13,24 @@ type Props = {
     onFeedBackRestartRequest: () => void,
     onFeedBackSent: () => void
 }
-export function FeedBackContentStep({ feedbackType, onFeedBackRestartRequest,onFeedBackSent }: Props) {
-    const [comment,setComment] = useState('');
+export function FeedBackContentStep({ feedbackType, onFeedBackRestartRequest, onFeedBackSent }: Props) {
+    const [comment, setComment] = useState('');
     const [screenShot, setScreenShot] = useState<string | null>(null);
+    const [isSendingFeedBack, setIsSendingFeedBack] = useState(false);
     const feedbackInfo = feedbackTypes[feedbackType];
 
 
-    function handleSubmitFeedBack(e:FormEvent){
+    async function handleSubmitFeedBack(e: FormEvent) {
         e.preventDefault()
-        console.log({
-            screenShot,
-            comment
+        setIsSendingFeedBack(true);
+
+        await api.post("/feedbacks", {
+            type: feedbackType,
+            comment,
+            screenshot:screenShot,
         })
 
+        setIsSendingFeedBack(false);
         onFeedBackSent();
     }
 
@@ -50,18 +57,18 @@ export function FeedBackContentStep({ feedbackType, onFeedBackRestartRequest,onF
                 />
 
                 <footer className="flex gap-2 mt-2">
-                    <ScreenShotButton 
-                    screenShot={screenShot}
-                    onScreenShotTook={setScreenShot}
+                    <ScreenShotButton
+                        screenShot={screenShot}
+                        onScreenShotTook={setScreenShot}
                     />
 
                     <button
-                        disabled={comment.length === 0}
+                        disabled={comment.length === 0 || isSendingFeedBack}
                         className="p-2 bg-brand-500 rounded-md border-transparent flex flex-1 justify-center items-center text-sm hover:bg-brand-300 focus:outline-none focus:ring-2 focus:ring-offset-2
                         focus:ring-offset-zinc-900 focus:ring-brand-500 transition-colors disabled:opacity-50 disabled:hover:bg-brand-500"
                         type="submit"
                     >
-                        Enviar
+                        {isSendingFeedBack ? <Loading /> : "Enviar Feedback"}
                     </button>
                 </footer>
 
