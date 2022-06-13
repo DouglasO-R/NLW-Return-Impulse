@@ -10,24 +10,23 @@ interface SubmitFeedbackUseCaseRequest {
 export class SubmitFeedbackUseCase {
   constructor(
     private repository: FeedbacksRepository,
-    private mailAdapter:MailAdapter
-    ) {}
+    private mailAdapter: MailAdapter
+  ) {}
 
   async execute(request: SubmitFeedbackUseCaseRequest) {
     const { type, comment, screenshot } = request;
 
-    if(!type){
-      throw new Error("Type is required")
+    if (!type) {
+      throw new Error("Type is required");
     }
 
-    if(!comment){
-      throw new Error("Type is required")
+    if (!comment) {
+      throw new Error("Type is required");
     }
 
-    if(screenshot && !screenshot.startsWith('data:image/png;base64')){
+    if (screenshot && !screenshot.startsWith("data:image/png;base64")) {
       throw new Error("Invalid screenshot format");
     }
-
 
     await this.repository.create({
       type,
@@ -36,13 +35,14 @@ export class SubmitFeedbackUseCase {
     });
 
     await this.mailAdapter.sendMail({
-      subject:"NOvo feedbakcl",
-      body:[
+      subject: "NOvo feedbakcl",
+      body: [
         `<div style="font-family:sans-serif;font-size: 16px; color:#111">`,
         `<p>tipo feedback ${type}</p>`,
         `<p>Comentario ${comment}</p>`,
+        screenshot ? `<img src="${screenshot}" />` : ``,
         `</div>`,
-      ].join("\n")
-    })
+      ].join("\n"),
+    });
   }
 }
