@@ -1,5 +1,9 @@
 # NLW-Return-Impulse
 
+<p align="center">
+  <img alt="Widget" src=".github/widget.png" width="50%">
+</p>
+
 ## 🧪 Tecnologias
 
 Esse projeto foi desenvolvido com as seguintes tecnologias:
